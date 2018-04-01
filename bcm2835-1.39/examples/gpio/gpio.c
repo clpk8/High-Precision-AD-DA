@@ -5,18 +5,18 @@
 *   Copyright (c) 2013 Shahrooz Shahparnia
 *
 *   Description:
-*   gpio is a command-line utility for executing gpio commands with the 
+*   gpio is a command-line utility for executing gpio commands with the
 *   Broadcom bcm2835.  It was developed and tested on a Raspberry Pi single-board
 *   computer model B.  The utility is based on the bcm2835 C library developed
 *   by Mike McCauley of Open System Consultants, http://www.open.com.au/mikem/bcm2835/.
 *
-*   Invoking "gpio" results in a read, set of clear of a GPIO.  
-*   Options include GPIO read/set/clear 
-*   of a single GPIO pin, enabling or disabling pull up and pull downs as well as 
-*   resetting all GPIOs to a default input state.  
+*   Invoking "gpio" results in a read, set of clear of a GPIO.
+*   Options include GPIO read/set/clear
+*   of a single GPIO pin, enabling or disabling pull up and pull downs as well as
+*   resetting all GPIOs to a default input state.
 *   The command usage and command-line parameters are described below
 *   in the showusage function, which prints the usage if no command-line parameters
-*   are included or if there are any command-line parameter errors.  Invoking gpio 
+*   are included or if there are any command-line parameter errors.  Invoking gpio
 *   requires root privilege.
 *
 *   This file contains the main function as well as functions for displaying
@@ -25,7 +25,7 @@
 *   Open Source Licensing GNU GPLv3
 *
 *   Building:
-* After installing bcm2835, you can build this 
+* After installing bcm2835, you can build this
 * with something like:
 * gcc -o gpio gpio.c -l bcm2835
 * sudo ./gpio
@@ -45,7 +45,7 @@
 *      Compile with: gcc -o gpio gpio.c bcm2835.c
 *
 *      Examples:
-*            Clear pin 5: sudo ./gpio -ib -dc -pn -n5  
+*            Clear pin 5: sudo ./gpio -ib -dc -pn -n5
 *            Reset all GPIOs to inputs and disable all pull up/downs: sudo ./gpio -ie
 *            Read pin 10: sudo ./gpio -ib -dr -pn -n10
 *            Read pin 10 in debug mode with verbose output: sudo ./gpio -ib -dr -pn -n10 -b
@@ -95,13 +95,13 @@ void gpio_reset(void);
 
 int comparse(int argc, char **argv) {
     int argnum, i, xmitnum;
-	
+
     if (argc < 2) {  // must have at least program name and len arguments
                      // or -ie (GPIO_END) or -ib (GPIO_BEGIN)
         fprintf(stderr, "Insufficient command line arguments\n");
         return EXIT_FAILURE;
     }
-    
+
     argnum = 1;
     while (argnum < argc && argv[argnum][0] == '-') {
 
@@ -128,7 +128,7 @@ int comparse(int argc, char **argv) {
                         return EXIT_FAILURE;
                 }
                 break;
-		
+
             case 'p':  // Pull up, down and no pull Mode
                 switch (argv[argnum][2]) {
                     case 'u': pull = PULL_UP; break;
@@ -138,7 +138,7 @@ int comparse(int argc, char **argv) {
                         fprintf(stderr, "%c is not a valid init option\n", argv[argnum][2]);
                         return EXIT_FAILURE;
                 }
-                break;		
+                break;
 
             case 'n':  // pin number
 	         pin_number = atoi(argv[argnum]+2);
@@ -159,7 +159,7 @@ int comparse(int argc, char **argv) {
 
     if (argnum == argc && init != NO_ACTION) // no further arguments are needed
         return EXIT_SUCCESS;
-  
+
     return EXIT_SUCCESS;
 }
 
@@ -181,7 +181,7 @@ int showusage(int errcode) {
     printf("      The end option will return the GPIO to inputs and turn off all pull up and pull downs.\n");
     printf("      It may be included with a transfer.\n");
     printf("    -dx where x is 'c' for clear, 's' is for set, 'r' for read and 'i' for read and set as input.\n");
-    printf("    -px where x is the GPIO pull up or down option. 'u' for pull up, 'd' for pull down and 'n' for none.\n");  
+    printf("    -px where x is the GPIO pull up or down option. 'u' for pull up, 'd' for pull down and 'n' for none.\n");
     printf("    -nx where x is the pin number.\n");
     printf("\n");
     return errcode;
@@ -190,13 +190,13 @@ int showusage(int errcode) {
 int main(int argc, char **argv) {
 
     printf("Running ... \n");
-    
+
     // parse the command line
     if (comparse(argc, argv) == EXIT_FAILURE) return showusage (EXIT_FAILURE);
 
     if (!bcm2835_init()) return 1;
-      
-    // GPIO begin if specified    
+
+    // GPIO begin if specified
     if (init == GPIO_BEGIN) ;
 
 
@@ -212,7 +212,7 @@ int main(int argc, char **argv) {
 	    break;
             case 5:
 	       pin = RPI_V2_GPIO_P1_05;
-	    break;	    
+	    break;
             case 7:
 	       pin = RPI_V2_GPIO_P1_07;
 	    break;
@@ -270,7 +270,7 @@ int main(int argc, char **argv) {
 		bcm2835_gpio_set_pud(pin, BCM2835_GPIO_PUD_OFF);
 	    break;
     	    default:
-		bcm2835_gpio_set_pud(pin, BCM2835_GPIO_PUD_OFF);	    
+		bcm2835_gpio_set_pud(pin, BCM2835_GPIO_PUD_OFF);
     }
 
     switch (mode) {
@@ -282,7 +282,7 @@ int main(int argc, char **argv) {
 	       bcm2835_gpio_fsel(pin, BCM2835_GPIO_FSEL_INPT);
 	       data = bcm2835_gpio_lev(pin);
 	       printf("Reading pin: %d\n", data);
-	    break; 
+	    break;
     	    case MODE_SET:
 	       bcm2835_gpio_fsel(pin, BCM2835_GPIO_FSEL_OUTP);
 	       bcm2835_gpio_set(pin);
@@ -295,15 +295,15 @@ int main(int argc, char **argv) {
 	       printf("Wrong mode ...!\n");
     }
 
-    if (debug_mode == DEBUG_ON) {    
-    	printf("Init %d\n", init);    
+    if (debug_mode == DEBUG_ON) {
+    	printf("Init %d\n", init);
     	printf("Mode %d\n", mode);
     	printf("Pull %d\n", pull);
     	printf("Pin Number %d\n", pin_number);
     	printf("Pin %d\n", pin);
-    }   
-       
-    if (init == GPIO_END) gpio_reset();       
+    }
+
+    if (init == GPIO_END) gpio_reset();
     bcm2835_close();
     printf("... done!\n");
     return 0;
