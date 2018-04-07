@@ -13,8 +13,11 @@
 #include <unistd.h>
 #include <sched.h>
 #include <fcntl.h>
-#include "ece4220lab3.h"
-#include <semaphore.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/timerfd.h>
+#include <stdint.h>
 
 
 #define MY_PRIORITY 51 //above kernel
